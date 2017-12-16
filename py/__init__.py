@@ -1203,3 +1203,23 @@ class Visdom(object):
             'layout': _opts2layout(opts),
             'opts': opts,
         })
+
+    def plotly(self, data, layout, win=None, env=None, opts=None):
+        """
+        This is a wrapper function for ploy.ly
+
+        `data` and `layout` are coming from plot.ly directly.
+
+        """
+
+        opts = {} if opts is None else opts
+        _assert_opts(opts)
+
+        return self._send({
+            'data': data,
+            'win': win,
+            'eid': env,
+            'layout': layout,
+            'opts': opts,
+        })
+
