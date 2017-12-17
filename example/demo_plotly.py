@@ -1,4 +1,4 @@
-from visdom import Visdom
+from visdom_plotly import Visdom
 from plotly.graph_objs import *
 
 viz = Visdom()
