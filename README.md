@@ -1,6 +1,15 @@
 # **Notice**
 This package is based on [Visdom](https://github.com/facebookresearch/visdom). It just has an additional method [Visdom.plotly()](https://github.com/rahmatkhah/visdom/blob/master/py/__init__.py#L1219) that directly supports plot.ly, see the [demo_plotly.py](https://github.com/rahmatkhah/visdom/blob/master/example/demo_plotly.py) example.
 
+Requires Python 3.6 and plot.ly
+
+```bash
+# Install Python server and client
+pip install visdom_plotly
+
+```
+
+
 # **Visdom**
 
 ![visdom_big](https://lh3.googleusercontent.com/-bqH9UXCw-BE/WL2UsdrrbAI/AAAAAAAAnYc/emrxwCmnrW4_CLTyyUttB0SYRJ-i4CCiQCLcB/s0/Screen+Shot+2017-03-06+at+10.51.02+AM.png"visdom_big")
