@@ -215,6 +215,23 @@ class BaseHandler(tornado.web.RequestHandler):
                 logging.error(e)
 
 
+def update_window(p, args):
+    """Adds new args to a window if they exist"""
+    content = p['content']
+    layout = content['layout']
+    layout.update(args.get('layout', {}))
+    opts = args.get('opts', {})
+    for opt_name, opt_val in opts.items():
+        if opt_name in p:
+            p[opt_name] = opt_val
+
+    if 'legend' in opts:
+        pdata = p['content']['data']
+        for i, d in enumerate(pdata):
+            d['name'] = opts['legend'][i]
+    return p
+
+
 def window(args):
     """ Build a window dict structure for sending to client """
     uid = args.get('win', 'window_' + get_rand_id())
@@ -396,11 +413,14 @@ class UpdateHandler(BaseHandler):
 
         pdata = p['content']['data']
 
-        new_data = args['data']
+        new_data = args.get('data')
         # TODO remove when updateTrace is deprecated
         if isinstance(new_data, dict):
             return UpdateHandler.update_updateTrace(p, args)
+        p = update_window(p, args)
         name = args.get('name')
+        if name is None:
+            return p  # we only updated the opts or layout
         append = args.get('append')
 
         idxs = list(range(len(pdata)))
@@ -595,6 +615,8 @@ class ErrorHandler(BaseHandler):
 # function that downloads and installs javascript, css, and font dependencies:
 def download_scripts(proxies=None, install_dir=None):
 
+    print("Downloading scripts. It might take a while.")
+
     # location in which to download stuff:
     if install_dir is None:
         import visdom
@@ -612,11 +634,13 @@ def download_scripts(proxies=None, install_dir=None):
         '%sreact-dom@15.6.1/dist/react-dom.min.js' % b: 'react-dom.min.js',
         '%sclassnames@2.2.5' % b: 'classnames',
         '%slayout-bin-packer@1.2.2' % b: 'layout_bin_packer',
-        'https://cdn.rawgit.com/STRML/react-grid-layout/0.14.0/dist/' +
+        'https://raw.githubusercontent.com/STRML/react-grid-layout/0.14.0/dist/' +
         'react-grid-layout.min.js': 'react-grid-layout.min.js',
         'https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_SVG':
             'mathjax-MathJax.js',
-        'https://cdn.rawgit.com/plotly/plotly.js/master/dist/plotly.min.js':
+        # here is another url in case the cdn breaks down again.
+        # https://raw.githubusercontent.com/plotly/plotly.js/master/dist/plotly.min.js
+        'https://cdn.plot.ly/plotly-latest.min.js':
             'plotly-plotly.min.js',
         '%scss/bootstrap.min.css' % bb: 'bootstrap.min.css',
         '%sfonts/glyphicons-halflings-regular.eot' % bb:
@@ -673,7 +697,7 @@ def download_scripts(proxies=None, install_dir=None):
                 logging.error('Error {} while downloading {}'.format(exc.code, key))
 
 
-def main():
+def main(print_func=None):
     print("It's Alive!")
     app = Application()
     app.listen(FLAGS.port, max_buffer_size=1024 ** 3)
@@ -682,7 +706,10 @@ def main():
         hostname = os.environ["HOSTNAME"]
     else:
         hostname = "localhost"
-    print("You can navigate to http://%s:%s" % (hostname, FLAGS.port))
+    if print_func is None:
+        print("You can navigate to http://%s:%s" % (hostname, FLAGS.port))
+    else:
+        print_func(FLAGS.port)
     ioloop.IOLoop.instance().start()
 
 

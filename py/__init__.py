@@ -100,8 +100,6 @@ def _axisformat(x, opts):
 
 def _opts2layout(opts, is3d=False):
     layout = {
-        'width': opts.get('width'),
-        'height': opts.get('height'),
         'showlegend': opts.get('showlegend', 'legend' in opts),
         'title': opts.get('title'),
         'xaxis': _axisformat('x', opts),
@@ -244,7 +242,7 @@ class Visdom(object):
             pass
 
     # Utils
-    def _send(self, msg, endpoint='events'):
+    def _send(self, msg, endpoint='events', quiet=False):
         """
         This function sends specified JSON request to the Tornado server. This
         function should generally not be called by the user, unless you want to
@@ -264,9 +262,10 @@ class Visdom(object):
             )
             return r.text
         except BaseException:
-            print("Exception in user code:")
-            print('-' * 60)
-            traceback.print_exc()
+            if not quiet:
+                print("Exception in user code:")
+                print('-' * 60)
+                traceback.print_exc()
             return False
 
     def save(self, envs):
@@ -305,7 +304,7 @@ class Visdom(object):
         return self._send({
             'win': win,
             'eid': env,
-        }, endpoint='win_exists')
+        }, endpoint='win_exists', quiet=True)
 
     def win_exists(self, win, env=None):
         """
@@ -569,6 +568,19 @@ class Visdom(object):
             'opts': opts,
         }, endpoint='update')
 
+    def update_window_opts(self, win, opts, env=None):
+        """
+        This function allows pushing new options to an existing plot window
+        without updating the content
+        """
+        data_to_send = {
+            'win': win,
+            'eid': env,
+            'layout': _opts2layout(opts),
+            'opts': opts,
+        }
+        return self._send(data_to_send, endpoint='update')
+
     def scatter(self, X, Y=None, win=None, env=None, opts=None, update=None,
                 name=None):
         """
@@ -815,7 +827,7 @@ class Visdom(object):
         X = np.squeeze(X)
         assert X.ndim == 1 or X.ndim == 2, 'X should be one or two-dimensional'
         if X.ndim == 1:
-            if opts.get('legend') is not None:
+            if opts is not None and opts.get('legend') is not None:
                 X = X[None, :]
                 assert opts.get('rownames') is None, \
                     'both rownames and legend cannot be specified \
