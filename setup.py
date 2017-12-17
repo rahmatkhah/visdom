@@ -16,7 +16,7 @@ requirements = [
 setup(
     # Metadata
     name='visdom_plotly',
-    version='0.1.6.4.1',
+    version='0.1.6.4.2',
     author='Hadi Rahmat-Khah',
     author_email='rahmatkhah@gmail.com',
     url='https://github.com/rahmatkhah/visdom',
