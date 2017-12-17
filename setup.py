@@ -16,11 +16,10 @@ requirements = [
 setup(
     # Metadata
     name='visdom_plotly',
-    version='0.1.6.4.2',
+    version='0.1.6.4.3',
     author='Hadi Rahmat-Khah',
     author_email='rahmatkhah@gmail.com',
     url='https://github.com/rahmatkhah/visdom',
-    download_url='https://github.com/rahmatkhah/visdom/archive/0.1.6.4.1.tar.gz',
     description='Visdom with the plot.ly support',
     long_description=readme,
     license='CC-BY-4.0',

@@ -619,7 +619,7 @@ def download_scripts(proxies=None, install_dir=None):
 
     # location in which to download stuff:
     if install_dir is None:
-        import visdom
+        import visdom_plotly as visdom
         install_dir = os.path.dirname(visdom.__file__)
 
     # all files that need to be downloaded:
