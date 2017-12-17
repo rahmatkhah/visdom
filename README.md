@@ -1,3 +1,5 @@
+# **Notice**
+This package is based on [Visdom](https://github.com/facebookresearch/visdom). It just has an additional method [Visdom.plotly()](https://github.com/rahmatkhah/visdom/blob/master/py/__init__.py#L1219) that directly supports plot.ly.
 
 # **Visdom**
 
